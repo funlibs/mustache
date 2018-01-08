@@ -1,0 +1,8 @@
+*.o
+*.a
+perf.data*
+cachegrind.*
+tests/test_dict
+tests/test_expand
+tests/test_expand2
+tests/test_load
