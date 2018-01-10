@@ -13,7 +13,7 @@ CWD != pwd
 MUSTACHE_LIBDIR := $(CWD)/src
 MUSTACHE_INCDIR := $(CWD)/src
 
-CFLAGS  = -ggdb -O3 -Wall -I$(MUSTACHE_INCDIR)
+CFLAGS  = -ggdb -O2 -Wall -I$(MUSTACHE_INCDIR)
 LDFLAGS = -L$(MUSTACHE_LIBDIR) -lmustache
 ARFLAGS = rcs
 
@@ -48,7 +48,7 @@ clean:
 	$(RM) libmustache.a
 
 .PHONY: tests
-tests: lib
+tests: libmustache.a
 	$(MAKE) -C tests $(SUBOPTS)
 
 .PHONY: check
