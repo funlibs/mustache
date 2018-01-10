@@ -1,7 +1,24 @@
+/* MIT License Copyright 2018  Sebastien Serre */
+
 #include "mustache.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+/*******************************************************************************
+ * Utilities functions
+ ******************************************************************************/
+unsigned long
+djb2_hash(const char *str)
+{
+    unsigned long hash = 5381;
+
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return (unsigned long) hash;
+}
 
 /*******************************************************************************
  * Arena memory management
@@ -138,7 +155,7 @@ Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *value)
                     (strcmp(entry->key, key->str) == 0) &&
                     (entry->type == STR_ENTRY))
             {
-                // update
+                /* update */
 
                 if (vlen > strlen(entry->value))
                     entry->value = Arena_malloc(dict->arena, vlen + 1);
@@ -146,13 +163,13 @@ Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *value)
                 break;
 
             } else if (!entry->next) {
-                // append new entry
+                /* append new entry */
 
                 entry->next = dict_create_entry(dict->arena, key->str, value);
                 break;
 
             } else {
-                // continue search
+                /* continue search */
 
                 entry = entry->next;
                 continue;
@@ -209,18 +226,18 @@ Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key)
                     (strcmp(entry->key, key->str) == 0) &&
                     (entry->type == SECTION_ENTRY))
             {
-                // return new dict
+                /* return new dict */
 
                 return dict_get_next_section_element(dict, entry);
 
             } else if (!entry->next) {
-                // append new entry and return new dict
+                /* append new entry and return new dict */
 
                 entry->next = dict_create_section(dict->arena, key->str);
                 return dict_get_next_section_element(dict, entry->next);
 
             } else {
-                // continue search
+                /* continue search */
 
                 entry = entry->next;
                 continue;
@@ -253,20 +270,20 @@ Mstc_dict_getSection2(const Dict *dict, const KeyHash *key, int *nelem)
                     (strcmp(entry->key, key->str) == 0) &&
                     (entry->type == SECTION_ENTRY))
             {
-                // found
+                /* found */
 
                 SectionElems *elems = (SectionElems*) entry->value;
                 *nelem = elems->nelems;
                 return elems->elems;
 
             } else if (!entry->next) {
-                // no match
+                /* no match */
 
                 *nelem = 0;
                 return NULL;
 
             } else {
-                // continue search
+                /* continue search */
 
                 entry = entry->next;
                 continue;
@@ -305,19 +322,19 @@ Mstc_dict_setShowSection2(Dict *dict, const KeyHash *key, const bool show)
                     (strcmp(entry->key, key->str) == 0) &&
                     (entry->type == BOOL_SECTION_ENTRY))
             {
-                // update
+                /* update */
                 *((bool*) entry->value) = (bool) show;
 
                 break;
 
             } else if (!entry->next) {
-                // append new entry
+                /* append new entry */
 
                 entry->next = dict_create_bool_entry(dict->arena, key->str, show);
                 break;
 
             } else {
-                // continue search
+                /* continue search */
 
                 entry = entry->next;
                 continue;
@@ -341,25 +358,27 @@ Mstc_dict_getShowSection2(const Dict *dict, const KeyHash *key)
 {
     DictEntry *entry = dict->entries[key->hash];
     bool section_has_data = false;
-    if (!entry) {
-        return false;
-    } else {
-        while(1) {
-            if (strcmp(entry->key, key->str) == 0)
-            {
-                if (entry->type == BOOL_SECTION_ENTRY) {// no need to go further
-                    return *((bool*) entry->value);
-                } else if (
-                        (entry->type == SECTION_ENTRY) &&
-                        ( ((SectionElems*) entry->value)->nelems > 0)) {
-                    section_has_data = true;
-                }
-            }
-            if (!entry->next)
-                break;
+    while(entry) {
 
-            entry = entry->next;
-        }
+      if (strcmp(entry->key, key->str) == 0)
+      {
+          if (entry->type == BOOL_SECTION_ENTRY) 
+	      { /* no need to go further */
+
+               return *((bool*) entry->value);
+
+          } else if (
+                 (entry->type == SECTION_ENTRY) &&
+                   ( ((SectionElems*) entry->value)->nelems > 0)) 
+          {
+
+                section_has_data = true;
+
+          }
+       }
+
+       entry = entry->next;
+
     }
     return section_has_data;
 }

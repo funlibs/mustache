@@ -50,7 +50,7 @@ main(int argc, char **argv) {
         printf("have %s\n", Mstc_dict_getValue(e, "kind"));
     }
 
-    //Mstc_ressource_printTokenStructure(res);
+    /*Mstc_ressource_printTokenStructure(res);*/
 
     ExpandOutput *exp = Mstc_expand_init(5000);
     Mstc_expand_run(res, dict, exp);

@@ -1,11 +1,11 @@
 TESTBINS = test_dict test_load test_expand test_expand2
 
-.PHONY: tests
+.PHONY: tests clean check profile
 tests: $(TESTBINS)
+
 %: %.c
 	$(CC) $(CFLAGS) -static $< $(LDFLAGS) -o $@
 
-.PHONY: clean
 clean:
 	$(RM) $(TESTBINS)
 
@@ -17,8 +17,8 @@ check: $(TESTBINS)
 
 .PHONY: profile
 profile: tests
-	sudo perf stat -d ./test_expand2.bin 300000 > /dev/null
+	sudo perf stat -d ./test_expand2 300000 > /dev/null
 	@echo "Press enter to continue"; read A
-	sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ./test_expand2.bin 300000 > /dev/null
+	sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ./test_expand2 300000 > /dev/null
 	sudo perf report
 	@#valgrind ./test_expand2.bin 10 > /dev/null;

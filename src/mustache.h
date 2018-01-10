@@ -1,3 +1,5 @@
+/* MIT License Copyright 2018  Sebastien Serre */
+
 #ifndef _MUSTACHE_H_
 #define _MUSTACHE_H_
 
@@ -8,6 +10,7 @@
  * UTILS
  *
  ******************************************************************************/
+unsigned long djb2_hash(const char *str);
 
 /*******************************************************************************
  * Arena memory management
@@ -29,18 +32,6 @@ void Arena_free(Arena *arena);
 /*
  * Hash algorythm
  */
-static inline unsigned long
-djb2_hash(const char *str)
-{
-    unsigned long hash = 5381;
-
-    int c;
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-    return (unsigned long) hash;
-}
-
 typedef struct Dict Dict;
 typedef struct DictEntry DictEntry;
 typedef struct SectionElems SectionElems;
@@ -152,7 +143,7 @@ typedef struct StaticString {
 
 typedef struct Token Token;
 struct Token {
-    void*     value;     // char, KeyHash or StaticString
+    void*     value;     /* char, KeyHash or StaticString */
     TokenType type;
     Token     *childs;
     int       nchilds;
@@ -217,4 +208,4 @@ extern ExpandOutput* Mstc_expand_init(int max);
 extern void Mstc_expand_free(ExpandOutput*);
 extern void Mstc_expand_run(const Ressource*, const Dict*, ExpandOutput*);
 
-#endif // _MUSTACHE_H_
+#endif /* _MUSTACHE_H_ */

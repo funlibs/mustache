@@ -1,17 +1,15 @@
-SOURCES = utils.c load.c expand.c
-HEADERS = mustache.h
-OBJECTS = $(SOURCES:.c=.o)
+ARFLAGS = rcs
+RM = rm -f
 
-all: libmustache.a
-
-libmustache.a: $(OBJECTS) $(HEADERS)
+OBJECTS = utils.o load.o expand.o
+libmustache.a: $(OBJECTS)
 	$(AR) $(ARFLAGS) libmustache.a $(OBJECTS)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-all: libmustache.a
-
-.PHONY: clean
+.PHONY: clean depend
 clean:
-	$(RM) *.o *.a *.bin perf.* cachegrind.out*
+	$(RM) $(OBJECTS) libmustache.a
+
+# Do not edit, generated with: cc -E -MM *.c
+expand.o: expand.c mustache.h
+load.o: load.c mustache.h
+utils.o: utils.c mustache.h

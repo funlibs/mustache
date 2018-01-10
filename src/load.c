@@ -1,4 +1,6 @@
+/* MIT License Copyright 2018  Sebastien Serre */
 #include "mustache.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,14 +9,6 @@
 #define RES_ARENA_BASE_SIZE 16777216 /* around 15 mb */
 #define RES_DICT_INIT_SIZE 50
 #define ROOT_SECTION_TOKEN_INITIAL_SIZE 20
-
-const char type_root[]        = "root_section";
-const char type_key[]         = "key";
-const char type_keynoescape[] = "key_no_escape";
-const char type_section[]     = "section";
-const char type_boolsection[] = "bool_section";
-const char type_invsection[]  = "inv_section";
-const char type_string[]      = "string";
 
 /* forward declaration */
 static Token do_load(const char*, Arena*);
@@ -68,6 +62,13 @@ void Mstc_ressource_printTokenStructure(Ressource *t)
     print_token(&t->root);
 }
 
+const char type_root[]        = "root_section";
+const char type_key[]         = "key";
+const char type_keynoescape[] = "key_no_escape";
+const char type_section[]     = "section";
+const char type_boolsection[] = "bool_section";
+const char type_invsection[]  = "inv_section";
+const char type_string[]      = "string";
 char*
 Mstc_ressource_getTypeFromCode(TokenType t)
 {
@@ -123,7 +124,7 @@ do_trim(char *str)
 static void
 insert_token(Token *root, const Token child, Arena *arena)
 {
-    if (!child.value) return; // a comment
+    if (!child.value) return; /* a comment */
 
     if (root->size == 0) {
         root->childs = Arena_malloc(arena,
@@ -172,7 +173,7 @@ tinyfy(char *str)
         if (*str == ' ' || *str == '\n' || *str == '\t')  {
             if (!skip_start) {
                 skip_start = str;
-                *skip_start = ' '; // replace newline and tabs with spaces
+                *skip_start = ' '; /* replace newline and tabs with spaces */
             }
         } else {
             if (skip_start) {
@@ -397,9 +398,9 @@ insert_res(Ressource **res, const char *filename, Arena *arena)
         (*res)->next = NULL;
         (*res)->root = do_load(filename, arena);
         return;
-    } else if (strcmp((*res)->filename, filename) == 0) { // allready loaded
+    } else if (strcmp((*res)->filename, filename) == 0) { /* allready loaded */
         return;
-    } else {    // find next
+    } else {    /* find next */
         insert_res(&(*res)->next, filename, arena);
     }
 }

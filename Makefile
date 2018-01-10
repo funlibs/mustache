@@ -2,45 +2,56 @@
 #
 # No build dependencies.
 #
-# To deploy use the striped version of libmustache.a (in this directory),
-# and src/mustache.h
+# To use, link with the striped version of libmustache.a (in this directory),
+# and src/mustache.h.
+#
+# For a shared library, you will have to build it.
 #
 
-export MUSTACHE_LIB    := libmustache.a
-export MUSTACHE_LIBDIR := $(shell pwd)/src
-export MUSTACHE_INCDIR := $(shell pwd)/src
+CWD != pwd
 
-export CFLAGS  = -ggdb -O2 -Wall -I$(MUSTACHE_INCDIR)
-export LDFLAGS = -L$(MUSTACHE_LIBDIR) -lmustache
-export ARFLAGS = rcs
+MUSTACHE_LIBDIR := $(CWD)/src
+MUSTACHE_INCDIR := $(CWD)/src
 
-export CP 		:= cp
-export CC 		:= cc
-export AR 		:= ar
-export RM 		:= rm -f
-export MAKE  	:= make
-export STRIP 	:= strip --strip-all
+CFLAGS  = -ggdb -O3 -Wall -I$(MUSTACHE_INCDIR)
+LDFLAGS = -L$(MUSTACHE_LIBDIR) -lmustache
+ARFLAGS = rcs
 
-.PHONY: lib
-lib: $(MUSTACHE_LIB)
-	strip $(MUSTACHE_LIB)
+CP ?= cp
+CC ?= cc
+AR ?= ar
+RM ?= rm -f
+MAKE  = @make
+STRIP = strip --strip-all
 
-$(MUSTACHE_LIB):
-	$(MAKE) -C src $(MUSTACHE_LIB)
-	$(CP) src/$(MUSTACHE_LIB) $(MUSTACHE_LIB)
+SUBOPTS += CC="$(CC)"
+SUBOPTS += CP="$(CP)"
+SUBOPTS += AR="$(AR)"
+SUBOPTS += RM="$(RM)"
+SUBOPTS += ARFLAGS="$(ARFLAGS)"
+SUBOPTS += CFLAGS="$(CFLAGS)"
+SUBOPTS += LDFLAGS="$(LDFLAGS)"
+SUBOPTS += MAKE="$(MAKE)"
+SUBOPTS += STRIP="$(STRIP)"
+SUBOPTS += MUSTACHE_LIBDIR="$(MUSTACHE_LIBDIR)"
+SUBOPTS += MUSTACHE_INCDIR="$(MUSTACHE_INCDIR)"
+ 
+libmustache.a:
+	$(MAKE) -C src $(SUBOPTS) libmustache.a
+	$(STRIP) -o libmustache.a src/libmustache.a
 
 
 .PHONY: clean
 clean:
-	$(MAKE) -C src clean
-	$(MAKE) -C tests clean
-	$(RM) $(MUSTACHE_LIB)
+	$(MAKE) -C src $(SUBOPTS) clean
+	$(MAKE) -C tests $(SUBOPTS) clean
+	$(RM) libmustache.a
 
 .PHONY: tests
 tests: lib
-	$(MAKE) -C tests
+	$(MAKE) -C tests $(SUBOPTS)
 
 .PHONY: check
-check: lib
-	$(MAKE) -C tests check
+check: libmustache.a
+	$(MAKE) -C tests $(SUBOPTS) check
 
