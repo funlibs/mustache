@@ -65,8 +65,8 @@ static int do_escape(char *b, char *str, size_t len)
 /* api */
 void
 Mstc_expand_run(
-	const Ressource *ressource, 
-	const Dict *dict,
+    const Ressource *ressource, 
+    const Dict *dict,
     ExpandOutput* exp)
 {
 
@@ -101,11 +101,11 @@ Mstc_expand_free(ExpandOutput* exp)
 /* handlers */
 static void
 handle_string(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
-	/* handle TokenType.STRING_TOKEN */
+    /* handle TokenType.STRING_TOKEN */
 
     StaticString *stvalue;
     if ((stvalue = (StaticString*) t->value) == NULL) return;
@@ -123,12 +123,12 @@ handle_string(
 
 static void
 handle_key_noescape(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.KEY_TOKEN_NO_ESCAPE */
+    /* handle TokenType.KEY_TOKEN_NO_ESCAPE */
 
     char *value;
     if ((value = Mstc_dict_getValue2(dict, (KeyHash*) t->value)) == NULL)
@@ -149,12 +149,12 @@ handle_key_noescape(
 
 static void
 handle_key(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.KEY_TOKEN */
+    /* handle TokenType.KEY_TOKEN */
 
     char *value;
     if ((value = Mstc_dict_getValue2(dict, (KeyHash*) t->value)) == NULL)
@@ -174,12 +174,12 @@ handle_key(
 
 static void
 handle_inv_section(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.INV_SECTION_TOKEN */
+    /* handle TokenType.INV_SECTION_TOKEN */
 
     if (Mstc_dict_getShowSection2(dict, (KeyHash*) t->value) == true)
         return;
@@ -192,12 +192,12 @@ handle_inv_section(
 
 static void
 handle_root_section(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.ROOT_SECTION_TOKEN */
+    /* handle TokenType.ROOT_SECTION_TOKEN */
 
     int i;
     for (i=0; i<t->nchilds; i++)
@@ -208,12 +208,12 @@ handle_root_section(
 
 static void
 handle_bool_section(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.BOOL_SECTION_TOKEN */
+    /* handle TokenType.BOOL_SECTION_TOKEN */
 
     if (Mstc_dict_getShowSection2(dict, (KeyHash*) t->value) == false)
         return;
@@ -226,14 +226,14 @@ handle_bool_section(
 
 static void
 handle_section(
-	const Token *t, 
-	const Dict *dict, 
-	ExpandOutput *exp)
+    const Token *t, 
+    const Dict *dict, 
+    ExpandOutput *exp)
 {
 
-	/* handle TokenType.SECTION_TOKEN */
+    /* handle TokenType.SECTION_TOKEN */
 
-	int n;
+    int n;
     Dict **subs = Mstc_dict_getSection2(dict, (KeyHash*) t->value, &n);
 
     int i, k;

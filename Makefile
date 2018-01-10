@@ -1,13 +1,24 @@
-# Mustache
+# mustache Makefile
 #
-# No build dependencies.
+# make: will build libmustache.a
+# make tests: will build the tests
+# make check: will run them
+# make clean: clean everything
+# make help: will show this text
 #
-# To use, link with the striped version of libmustache.a (in this directory),
-# and src/mustache.h.
+# To use it, staticaly link libmustache.a and include mustache.h.
 #
-# For a shared library, you will have to build it.
+# Example:
+# $ cat myprog.c
+# #include "mustache.h"
+# int main(int argc, char **argv) {
+#     RessourceStore *s = Mstc_ressource_create();
+#     Mstc_ressource_free(s);
+#     return 0;
+# }
 #
-
+# $ cc -Ipath_to_mustache.h_dir -static myprog.c -Lpath_to_libmustache.a_dir -lmustache -o myprog
+# 
 CWD != pwd
 
 MUSTACHE_LIBDIR := $(CWD)/src
@@ -40,6 +51,9 @@ libmustache.a:
 	$(MAKE) -C src $(SUBOPTS) libmustache.a
 	$(STRIP) -o libmustache.a src/libmustache.a
 
+libmustache.so:
+	$(MAKE) -C src $(SUBOPTS) libmustache.so
+	$(STRIP) -o libmustache.so src/libmustache.so
 
 .PHONY: clean
 clean:
@@ -54,4 +68,3 @@ tests: libmustache.a
 .PHONY: check
 check: libmustache.a
 	$(MAKE) -C tests $(SUBOPTS) check
-

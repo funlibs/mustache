@@ -363,13 +363,13 @@ Mstc_dict_getShowSection2(const Dict *dict, const KeyHash *key)
       if (strcmp(entry->key, key->str) == 0)
       {
           if (entry->type == BOOL_SECTION_ENTRY) 
-	      { /* no need to go further */
+          { /* no need to go further */
 
                return *((bool*) entry->value);
 
           } else if (
                  (entry->type == SECTION_ENTRY) &&
-                   ( ((SectionElems*) entry->value)->nelems > 0)) 
+                 (((SectionElems*) entry->value)->nelems > 0)) 
           {
 
                 section_has_data = true;
