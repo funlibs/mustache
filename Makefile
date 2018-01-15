@@ -8,7 +8,7 @@
 #
 # To use it, staticaly link libmustache.a and include mustache.h.
 #
-# Example:
+# Example that does nothing:
 # $ cat myprog.c
 # #include "mustache.h"
 # int main(int argc, char **argv) {
@@ -17,54 +17,53 @@
 #     return 0;
 # }
 #
-# $ cc -Ipath_to_mustache.h_dir -static myprog.c -Lpath_to_libmustache.a_dir -lmustache -o myprog
-# 
-CWD != pwd
+# $ cc -I. -static myprog.c -L. -lmustache -o myprog
 
-MUSTACHE_LIBDIR := $(CWD)/src
-MUSTACHE_INCDIR := $(CWD)/src
+CWD     != pwd
+CFLAGS  = -ggdb -O2 -Wall -I$(CWD)
+LDFLAGS = -L$(CWD) -lmustache
+STRIP   = strip --strip-unneeded
+RM      = rm -f
 
-CFLAGS  = -ggdb -O2 -Wall -I$(MUSTACHE_INCDIR)
-LDFLAGS = -L$(MUSTACHE_LIBDIR) -lmustache
-ARFLAGS = rcs
+all: libmustache.a
+	$(STRIP) libmustache.a
 
-CP ?= cp
-CC ?= cc
-AR ?= ar
-RM ?= rm -f
-MAKE  = @make
-STRIP = strip --strip-all
+OBJECTS = utils.o load.o expand.o
 
-SUBOPTS += CC="$(CC)"
-SUBOPTS += CP="$(CP)"
-SUBOPTS += AR="$(AR)"
-SUBOPTS += RM="$(RM)"
-SUBOPTS += ARFLAGS="$(ARFLAGS)"
+libmustache.a: $(OBJECTS)
+	$(AR) rcs libmustache.a $(OBJECTS)
+
+expand.o: expand.c mustache.h
+	$(CC) $(CFLAGS) -c expand.c -o expand.o
+
+load.o: load.c mustache.h
+	$(CC) $(CFLAGS) -c load.c -o load.o
+
+utils.o: utils.c mustache.h
+	$(CC) $(CFLAGS) -c utils.c -o utils.o
+
+
+# TESTS directory
+.PHONY: tests check profile
+
 SUBOPTS += CFLAGS="$(CFLAGS)"
 SUBOPTS += LDFLAGS="$(LDFLAGS)"
-SUBOPTS += MAKE="$(MAKE)"
-SUBOPTS += STRIP="$(STRIP)"
-SUBOPTS += MUSTACHE_LIBDIR="$(MUSTACHE_LIBDIR)"
-SUBOPTS += MUSTACHE_INCDIR="$(MUSTACHE_INCDIR)"
- 
-libmustache.a:
-	$(MAKE) -C src $(SUBOPTS) libmustache.a
-	$(STRIP) -o libmustache.a src/libmustache.a
+SUBOPTS += MUSTACHE_DIR="$(MUSTACHE_DIR)"
+SUBOPTS += RM="$(RM)"
 
-libmustache.so:
-	$(MAKE) -C src $(SUBOPTS) libmustache.so
-	$(STRIP) -o libmustache.so src/libmustache.so
-
-.PHONY: clean
-clean:
-	$(MAKE) -C src $(SUBOPTS) clean
-	$(MAKE) -C tests $(SUBOPTS) clean
-	$(RM) libmustache.a
-
-.PHONY: tests
 tests: libmustache.a
-	$(MAKE) -C tests $(SUBOPTS)
+	@$(MAKE) -C tests $(SUBOPTS)
 
-.PHONY: check
 check: libmustache.a
-	$(MAKE) -C tests $(SUBOPTS) check
+	@$(MAKE) -C tests $(SUBOPTS) check
+
+profile: libmustache.a
+	@$(MAKE) -C tests $(SUBOPTS) profile
+
+
+# clean
+.PHONY: clean
+
+clean:
+	$(RM) $(OBJECTS) libmustache.a
+	$(MAKE) -C tests $(SUBOPTS) clean

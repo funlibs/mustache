@@ -20,9 +20,11 @@ typedef struct Arena Arena;
 Arena* Arena_new(unsigned int const need);
 void* Arena_malloc(Arena *arena, unsigned int const size);
 void* Arena_calloc(Arena *arena, unsigned int size);
-void* Arena_realloc(Arena *arena, void const *ptr,
-                        unsigned int const old_size,
-                        unsigned int const size);
+void* Arena_realloc(
+    Arena *arena,
+    void const *ptr,
+    unsigned int const old_size,
+    unsigned int const size);
 void Arena_free(Arena *arena);
 
 
@@ -192,6 +194,9 @@ Mstc_ressource_get(RessourceStore*, const int);
  */
 extern void Mstc_ressource_free(RessourceStore *store);
 
+/*
+ * For debuging purpose
+ */
 extern void Mstc_ressource_printTokenStructure(Ressource *t);
 
 

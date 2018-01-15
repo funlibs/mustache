@@ -3,8 +3,15 @@ TESTBINS = test_dict test_load test_expand test_expand2
 .PHONY: tests clean check profile
 tests: $(TESTBINS)
 
-%: %.c
-	$(CC) $(CFLAGS) -static $< $(LDFLAGS) -o $@
+test_dict: test_dict.c ../mustache.h
+	$(CC) $(CFLAGS) -static test_dict.c $(LDFLAGS) -o test_dict
+test_expand2: test_expand2.c ../mustache.h
+	$(CC) $(CFLAGS) -static test_expand2.c $(LDFLAGS) -o test_expand2
+test_expand: test_expand.c ../mustache.h
+	$(CC) $(CFLAGS) -static test_expand.c $(LDFLAGS) -o test_expand
+test_load: test_load.c ../mustache.h
+	$(CC) $(CFLAGS) -static test_load.c $(LDFLAGS) -o test_load
+
 
 clean:
 	$(RM) $(TESTBINS)
@@ -22,3 +29,4 @@ profile: tests
 	sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ./test_expand2 300000 > /dev/null
 	sudo perf report
 	@#valgrind ./test_expand2.bin 10 > /dev/null;
+

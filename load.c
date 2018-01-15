@@ -1,14 +1,16 @@
 /* MIT License Copyright 2018  Sebastien Serre */
-#include "mustache.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
+#include "mustache.h"
+
 #define RES_ARENA_BASE_SIZE 16777216 /* around 15 mb */
 #define RES_DICT_INIT_SIZE 50
 #define ROOT_SECTION_TOKEN_INITIAL_SIZE 20
+
 
 /* forward declaration */
 static Token do_load(const char*, Arena*);
@@ -19,6 +21,7 @@ static char* get_filename(char*, const int, Arena*);
 static int do_tokenize(Token*, char**, Arena*);
 static void print_token(Token*);
 static void insert_res(Ressource**, const char*, Arena*);
+
 
 RessourceStore*
 Mstc_ressource_create()
@@ -31,25 +34,35 @@ Mstc_ressource_create()
     return store;
 }
 
+
 int
-Mstc_ressource_load(RessourceStore *store, const char *filename)
+Mstc_ressource_load(
+    RessourceStore *store, 
+    const char *filename)
 {
     int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
     insert_res(&store->res[hash], filename, store->arena);
     return hash;
 }
 
+
 int
-Mstc_ressource_getId(RessourceStore *store, const char *filename)
+Mstc_ressource_getId(
+    RessourceStore *store, 
+    const char *filename)
 {
     return Mstc_ressource_load(store, filename);
 }
 
+
 Ressource*
-Mstc_ressource_get(RessourceStore *store, const int id)
+Mstc_ressource_get(
+    RessourceStore *store, 
+    const int id)
 {
     return store->res[id];
 }
+
 
 void
 Mstc_ressource_free(RessourceStore *store)
@@ -57,10 +70,12 @@ Mstc_ressource_free(RessourceStore *store)
     Arena_free(store->arena);
 }
 
+
 void Mstc_ressource_printTokenStructure(Ressource *t)
 {
     print_token(&t->root);
 }
+
 
 const char type_root[]        = "root_section";
 const char type_key[]         = "key";
@@ -92,6 +107,7 @@ Mstc_ressource_getTypeFromCode(TokenType t)
     }
 }
 
+
 /* static */
 static void
 do_trim(char *str)
@@ -121,8 +137,12 @@ do_trim(char *str)
         str[strlen(str) - trim_right] = '\0';
 }
 
+
 static void
-insert_token(Token *root, const Token child, Arena *arena)
+insert_token(
+    Token *root, 
+    const Token child, 
+    Arena *arena)
 {
     if (!child.value) return; /* a comment */
 
@@ -139,8 +159,13 @@ insert_token(Token *root, const Token child, Arena *arena)
     root->nchilds++;
 }
 
+
 static void
-set_token_keystr(Token *t, const char *str, const int len, Arena *arena)
+set_token_keystr(
+    Token *t, 
+    const char *str, 
+    const int len, 
+    Arena *arena)
 {
     KeyHash *h = Arena_malloc(arena, sizeof(KeyHash));
     char *str2 = Arena_malloc(arena, len + 1);
@@ -151,8 +176,9 @@ set_token_keystr(Token *t, const char *str, const int len, Arena *arena)
     t->value = (void*) h;
 }
 
+
 /* may overlaps */
-static void
+static inline void
 strmove(char *dest, char *src)
 {
     while((*src) != '\0') {
@@ -163,6 +189,7 @@ strmove(char *dest, char *src)
     *dest = '\0';
 
 }
+
 
 static void
 tinyfy(char *str)
@@ -193,8 +220,13 @@ tinyfy(char *str)
     }
 }
 
+
 static void
-set_token_staticstr(Token *t, const char *str, const int len, Arena *arena)
+set_token_staticstr(
+    Token *t, 
+    const char *str, 
+    const int len, 
+    Arena *arena)
 {
     /* build a temporary array to store mignified string in arena */
     char *buff = malloc(len + 1);
@@ -212,8 +244,12 @@ set_token_staticstr(Token *t, const char *str, const int len, Arena *arena)
     t->value = (void*) statstr;
 }
 
+
 static char*
-get_filename(char *str, const int len, Arena *arena)
+get_filename(
+    char *str, 
+    const int len, 
+    Arena *arena)
 {
     char *r = Arena_malloc(arena, len + 1);
     strncpy(r, str, len);
@@ -221,12 +257,15 @@ get_filename(char *str, const int len, Arena *arena)
     return r;
 }
 
+
 static const char token_start[] = "{{";
 static const char token_end[]   = "}}";
 static int
-do_tokenize(Token *t, char **current, Arena *arena)
+do_tokenize(
+    Token *t, 
+    char **current, 
+    Arena *arena)
 {
-
     int s;
     if (strlen(*current) == 0) /* end of processing */
         return 0;
@@ -322,6 +361,7 @@ do_tokenize(Token *t, char **current, Arena *arena)
     }
 }
 
+
 static int pos = 0;
 static void
 print_token(Token *t)
@@ -349,8 +389,11 @@ print_token(Token *t)
     }
 }
 
+
 static Token
-do_load(const char *filename, Arena *arena)
+do_load(
+    const char *filename, 
+    Arena *arena)
 {
     /* read file into memory */
     FILE *fp;
@@ -365,7 +408,7 @@ do_load(const char *filename, Arena *arena)
     if (fread(str, 1, fsize, fp) != fsize)
         abort();
     fclose(fp);
-	str[fsize] = '\0';
+    str[fsize] = '\0';
 
     /* create root tokens */
     Token root;
@@ -388,8 +431,12 @@ do_load(const char *filename, Arena *arena)
     return root;
 }
 
+
 static void
-insert_res(Ressource **res, const char *filename, Arena *arena)
+insert_res(
+    Ressource **res, 
+    const char *filename, 
+    Arena *arena)
 {
     if (*res == NULL) {
         *res = Arena_malloc(arena, sizeof(Ressource));

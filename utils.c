@@ -1,12 +1,14 @@
 /* MIT License Copyright 2018  Sebastien Serre */
 
-#include "mustache.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
+#include "mustache.h"
+
+
 /*******************************************************************************
- * Utilities functions
+ * Utilities 
  ******************************************************************************/
 unsigned long
 djb2_hash(const char *str)
@@ -20,16 +22,17 @@ djb2_hash(const char *str)
     return (unsigned long) hash;
 }
 
+
 /*******************************************************************************
  * Arena memory management
  ******************************************************************************/
-
 struct Arena {
     char *mem;
     char *available;
     char *limit;
     Arena *next;
 };
+
 
 Arena*
 Arena_new(const unsigned int base_size)
@@ -45,6 +48,7 @@ Arena_new(const unsigned int base_size)
     arena->next = NULL;
     return arena;
 }
+
 
 void*
 Arena_malloc(Arena *arena, const unsigned int size)
@@ -62,6 +66,7 @@ Arena_malloc(Arena *arena, const unsigned int size)
     }
 }
 
+
 void*
 Arena_calloc(Arena *arena, const unsigned int size)
 {
@@ -69,6 +74,7 @@ Arena_calloc(Arena *arena, const unsigned int size)
     memset((void*) res, 0, size);
     return res;
 }
+
 
 void*
 Arena_realloc(Arena *arena, void const *ptr,
@@ -80,6 +86,7 @@ Arena_realloc(Arena *arena, void const *ptr,
         memcpy(res, ptr, old_size);
     return res;
 }
+
 
 void
 Arena_free(Arena *arena)
@@ -118,6 +125,7 @@ Mstc_dict_genKeyHash(char *key) {
     return h;
 }
 
+
 Dict*
 Mstc_dict_new()
 {
@@ -126,8 +134,12 @@ Mstc_dict_new()
     return d;
 }
 
+
 void
-Mstc_dict_setValue(Dict *dict, char *key, const char *value)
+Mstc_dict_setValue(
+    Dict *dict,
+    char *key, 
+    const char *value)
 {
     KeyHash h;
     h.str = key;
@@ -135,8 +147,12 @@ Mstc_dict_setValue(Dict *dict, char *key, const char *value)
     Mstc_dict_setValue2(dict, &h, value);
 }
 
+
 void
-Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *value)
+Mstc_dict_setValue2(
+    Dict *dict, 
+    const KeyHash *key, 
+    const char *value)
 {
     DictEntry   *entry;
     DictEntry **pentry = &dict->entries[key->hash];
@@ -179,8 +195,11 @@ Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *value)
     }
 }
 
+
 char*
-Mstc_dict_getValue(const Dict *dict, char *key)
+Mstc_dict_getValue(
+    const Dict *dict, 
+    char *key)
 {
     KeyHash h;
     h.str = key;
@@ -188,8 +207,11 @@ Mstc_dict_getValue(const Dict *dict, char *key)
     return Mstc_dict_getValue2(dict, &h);
 }
 
+
 char*
-Mstc_dict_getValue2(const Dict *dict, const KeyHash *key)
+Mstc_dict_getValue2(
+    const Dict *dict, 
+    const KeyHash *key)
 {
     char* ret = dict_search_value(dict->entries[key->hash], key->str);
 
@@ -199,8 +221,11 @@ Mstc_dict_getValue2(const Dict *dict, const KeyHash *key)
     return ret;
 }
 
+
 Dict*
-Mstc_dict_addSectionItem(Dict *dict, char *key)
+Mstc_dict_addSectionItem(
+    Dict *dict, 
+    char *key)
 {
     KeyHash h;
     h.hash = djb2_hash(key) % DICT_MAX_SIZE;
@@ -208,8 +233,11 @@ Mstc_dict_addSectionItem(Dict *dict, char *key)
     return Mstc_dict_addSectionItem2(dict, &h);
 }
 
+
 Dict*
-Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key)
+Mstc_dict_addSectionItem2(
+    Dict *dict, 
+    const KeyHash *key)
 {
     DictEntry *entry;
     DictEntry **pentry = &dict->entries[key->hash];
@@ -247,8 +275,12 @@ Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key)
     }
 }
 
+
 Dict**
-Mstc_dict_getSection(const Dict *dict, char *key, int *nelem)
+Mstc_dict_getSection(
+    const Dict *dict, 
+    char *key, 
+    int *nelem)
 {
     KeyHash h;
     h.hash = djb2_hash(key) % DICT_MAX_SIZE;
@@ -256,8 +288,12 @@ Mstc_dict_getSection(const Dict *dict, char *key, int *nelem)
     return Mstc_dict_getSection2(dict, &h, nelem);
 }
 
+
 Dict**
-Mstc_dict_getSection2(const Dict *dict, const KeyHash *key, int *nelem)
+Mstc_dict_getSection2(
+    const Dict *dict, 
+    const KeyHash *key, 
+    int *nelem)
 {
     DictEntry *entry = dict->entries[key->hash];
 
@@ -295,7 +331,10 @@ Mstc_dict_getSection2(const Dict *dict, const KeyHash *key, int *nelem)
 
 
 void
-Mstc_dict_setShowSection(Dict *dict, char *key, const bool show)
+Mstc_dict_setShowSection(
+    Dict *dict, 
+    char *key, 
+    const bool show)
 {
     KeyHash h;
     h.hash = djb2_hash(key) % DICT_MAX_SIZE;
@@ -303,8 +342,12 @@ Mstc_dict_setShowSection(Dict *dict, char *key, const bool show)
     Mstc_dict_setShowSection2(dict, &h, show);
 }
 
+
 void
-Mstc_dict_setShowSection2(Dict *dict, const KeyHash *key, const bool show)
+Mstc_dict_setShowSection2(
+    Dict *dict, 
+    const KeyHash *key, 
+    const bool show)
 {
     DictEntry   *entry;
     DictEntry **pentry = &dict->entries[key->hash];
@@ -344,8 +387,11 @@ Mstc_dict_setShowSection2(Dict *dict, const KeyHash *key, const bool show)
     }
 }
 
+
 bool
-Mstc_dict_getShowSection(const Dict *dict, char *key)
+Mstc_dict_getShowSection(
+    const Dict *dict, 
+    char *key)
 {
     KeyHash h;
     h.str = key;
@@ -353,8 +399,11 @@ Mstc_dict_getShowSection(const Dict *dict, char *key)
     return Mstc_dict_getShowSection2(dict, &h);
 }
 
+
 bool
-Mstc_dict_getShowSection2(const Dict *dict, const KeyHash *key)
+Mstc_dict_getShowSection2(
+    const Dict *dict, 
+    const KeyHash *key)
 {
     DictEntry *entry = dict->entries[key->hash];
     bool section_has_data = false;
@@ -383,6 +432,7 @@ Mstc_dict_getShowSection2(const Dict *dict, const KeyHash *key)
     return section_has_data;
 }
 
+
 void
 Mstc_dict_free(Dict *dict)
 {
@@ -403,8 +453,11 @@ dict_new(Arena *arena)
     return d;
 }
 
+
 static char*
-dict_search_value(DictEntry *entry, const char *key)
+dict_search_value(
+    DictEntry *entry, 
+    const char *key)
 {
     if (!entry)
         return empty;
@@ -416,8 +469,11 @@ dict_search_value(DictEntry *entry, const char *key)
         return (char*) entry->value;
 }
 
+
 static Dict*
-dict_get_next_section_element(Dict *dict, DictEntry *entry)
+dict_get_next_section_element(
+    Dict *dict, 
+    DictEntry *entry)
 {
     SectionElems *e = (SectionElems*) entry->value;
     if (e->limit == e->nelems) {
@@ -433,8 +489,12 @@ dict_get_next_section_element(Dict *dict, DictEntry *entry)
     return d;
 }
 
+
 static DictEntry*
-dict_create_entry(Arena *arena, const char *key, const char *value)
+dict_create_entry(
+    Arena *arena, 
+    const char *key, 
+    const char *value)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
     entry->next = NULL;
@@ -446,8 +506,11 @@ dict_create_entry(Arena *arena, const char *key, const char *value)
     return entry;
 }
 
+
 static DictEntry*
-dict_create_section(Arena *arena, const char *key)
+dict_create_section(
+    Arena *arena, 
+    const char *key)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
     entry->next = NULL;
@@ -464,7 +527,10 @@ dict_create_section(Arena *arena, const char *key)
 }
 
 static DictEntry*
-dict_create_bool_entry(Arena *arena, const char *key, const bool show)
+dict_create_bool_entry(
+    Arena *arena, 
+    const char *key, 
+    const bool show)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
     entry->next = NULL;
@@ -475,4 +541,3 @@ dict_create_bool_entry(Arena *arena, const char *key, const bool show)
     *((bool*) entry->value) = (bool) show;
     return entry;
 }
-

@@ -1,21 +1,28 @@
 /* MIT License Copyright 2018  Sebastien Serre */
 
-#include "mustache.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
+#include "mustache.h"
+
 
 /* token handlers */
-static void handle_string(const Token*, const Dict*, ExpandOutput*);
-static void handle_key_noescape(const Token*, const Dict*, ExpandOutput*);
-static void handle_key(const Token*, const Dict*, ExpandOutput*);
-static void handle_inv_section(const Token*, const Dict*, ExpandOutput*);
-static void handle_section(const Token*, const Dict*, ExpandOutput*);
-static void handle_bool_section(const Token*, const Dict*, ExpandOutput*);
-static void handle_root_section(const Token*, const Dict*, ExpandOutput*);
+static void handle_string(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_key_noescape(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_key(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_inv_section(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_section(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_bool_section(
+    const Token*, const Dict*, ExpandOutput*);
+static void handle_root_section(
+    const Token*, const Dict*, ExpandOutput*);
 static void (*handlers[7])(const Token*, const Dict*, ExpandOutput*) = {
     handle_string,
     handle_key,
@@ -25,20 +32,30 @@ static void (*handlers[7])(const Token*, const Dict*, ExpandOutput*) = {
     handle_bool_section,
     handle_root_section};
 
+
 /* exape html chars with minimal branches */
 static char doublequot[] = "&#34;";
 static char amp[]        = "&#38;";
 static char singlequot[] = "&#39;";
 static char lt[]         = "&#60;";
 static char gt[]         = "&#62;";
-static char *ascii_table[] = {
+static char *ascii_table[256] = {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  /* 0 ... 24 */
     0,0,0,0,0,0,0,0,0,doublequot,0,0,0,amp,singlequot,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,lt,0,gt,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0}; /* ..127 */
-static int do_escape(char *b, char *str, size_t len)
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0}; /* ..255 */
+static inline int 
+do_escape(
+    char *b, 
+    char *str, 
+    size_t len)
 {
     char *c;
     int n = len;
@@ -69,24 +86,20 @@ Mstc_expand_run(
     const Dict *dict,
     ExpandOutput* exp)
 {
-
     exp->used = 0; /* reset */
     handle_root_section(&ressource->root, dict, exp);
     exp->out[exp->used] = '\0';
-
 }
 
 
 ExpandOutput*
 Mstc_expand_init(int max) 
 {
-
     ExpandOutput *exp = malloc(sizeof(ExpandOutput));
     exp->out = malloc(max);
     exp->max = max;
     exp->used = 0;
     return exp;
-
 }
 
 
@@ -118,8 +131,8 @@ handle_string(
     memcpy(&exp->out[exp->used], stvalue->str, stvalue->len);
 
     exp->used += stvalue->len;
-
 }
+
 
 static void
 handle_key_noescape(
@@ -127,7 +140,6 @@ handle_key_noescape(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.KEY_TOKEN_NO_ESCAPE */
 
     char *value;
@@ -143,7 +155,6 @@ handle_key_noescape(
     memcpy(&exp->out[exp->used], value, len);
 
     exp->used += len;
-
 }
 
 
@@ -153,7 +164,6 @@ handle_key(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.KEY_TOKEN */
 
     char *value;
@@ -169,8 +179,8 @@ handle_key(
     len = do_escape(&exp->out[exp->used], value, len);
 
     exp->used += len;
-
 }
+
 
 static void
 handle_inv_section(
@@ -178,7 +188,6 @@ handle_inv_section(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.INV_SECTION_TOKEN */
 
     if (Mstc_dict_getShowSection2(dict, (KeyHash*) t->value) == true)
@@ -187,8 +196,8 @@ handle_inv_section(
     int i;
     for (i=0; i<t->nchilds; i++)
         handlers[(&t->childs[i])->type](&t->childs[i], dict, exp);
-
 }
+
 
 static void
 handle_root_section(
@@ -196,13 +205,11 @@ handle_root_section(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.ROOT_SECTION_TOKEN */
 
     int i;
     for (i=0; i<t->nchilds; i++)
         handlers[(&t->childs[i])->type](&t->childs[i], dict, exp);
-
 }
 
 
@@ -212,7 +219,6 @@ handle_bool_section(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.BOOL_SECTION_TOKEN */
 
     if (Mstc_dict_getShowSection2(dict, (KeyHash*) t->value) == false)
@@ -221,8 +227,8 @@ handle_bool_section(
     int i;
     for (i=0; i<t->nchilds; i++)
         handlers[(&t->childs[i])->type](&t->childs[i], dict, exp);
-
 }
+
 
 static void
 handle_section(
@@ -230,7 +236,6 @@ handle_section(
     const Dict *dict, 
     ExpandOutput *exp)
 {
-
     /* handle TokenType.SECTION_TOKEN */
 
     int n;
@@ -240,7 +245,4 @@ handle_section(
     for (i=0; i<n; i++)
         for (k=0; k<t->nchilds; k++)
             handlers[(&t->childs[k])->type](&t->childs[k], subs[i], exp);
-
 }
-
-
