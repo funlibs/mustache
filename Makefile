@@ -19,9 +19,8 @@
 #
 # $ cc -I. -static myprog.c -L. -lmustache -o myprog
 
-CWD     != pwd
-CFLAGS  = -ggdb -O2 -Wall -I$(CWD)
-LDFLAGS = -L$(CWD) -lmustache
+CFLAGS  = -ansi -Wall -ggdb -O2 -I$(PWD)
+LDFLAGS = -L$(PWD) -lmustache
 STRIP   = strip --strip-unneeded
 RM      = rm -f
 
@@ -52,13 +51,13 @@ SUBOPTS += MUSTACHE_DIR="$(MUSTACHE_DIR)"
 SUBOPTS += RM="$(RM)"
 
 tests: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS)
+	@$(MAKE) -C tests $(SUBOPTS) clean tests
 
 check: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS) check
+	@$(MAKE) -C tests $(SUBOPTS) clean check
 
 profile: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS) profile
+	@$(MAKE) -C tests $(SUBOPTS) clean profile
 
 
 # clean

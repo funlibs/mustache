@@ -29,7 +29,7 @@ void Arena_free(Arena *arena);
 
 
 /*******************************************************************************
- * Dict 
+ * Dict
  ******************************************************************************/
 /*
  * Hash algorythm
@@ -135,12 +135,12 @@ typedef enum {
     SECTION_TOKEN = 3,       /* a group, begining with #bla end ending with /bla */
     INV_SECTION_TOKEN = 4,   /* a group, begining with ^bla end ending with /bla */
     BOOL_SECTION_TOKEN = 5,  /* a group, begining with ?bla end ending with /bla */
-    ROOT_SECTION_TOKEN = 6,  /* the root element */
+    ROOT_SECTION_TOKEN = 6   /* the root element */
 } TokenType;
 
 typedef struct StaticString {
     char *str;
-    int len;
+    unsigned int len;
 } StaticString;
 
 typedef struct Token Token;
@@ -205,8 +205,8 @@ extern void Mstc_ressource_printTokenStructure(Ressource *t);
  ******************************************************************************/
 typedef struct ExpandOutput {
     char *out;
-    int used;
-    int max;
+    unsigned int used;
+    unsigned int max;
 } ExpandOutput;
 
 extern ExpandOutput* Mstc_expand_init(int max);

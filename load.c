@@ -37,7 +37,7 @@ Mstc_ressource_create()
 
 int
 Mstc_ressource_load(
-    RessourceStore *store, 
+    RessourceStore *store,
     const char *filename)
 {
     int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
@@ -48,7 +48,7 @@ Mstc_ressource_load(
 
 int
 Mstc_ressource_getId(
-    RessourceStore *store, 
+    RessourceStore *store,
     const char *filename)
 {
     return Mstc_ressource_load(store, filename);
@@ -57,7 +57,7 @@ Mstc_ressource_getId(
 
 Ressource*
 Mstc_ressource_get(
-    RessourceStore *store, 
+    RessourceStore *store,
     const int id)
 {
     return store->res[id];
@@ -140,8 +140,8 @@ do_trim(char *str)
 
 static void
 insert_token(
-    Token *root, 
-    const Token child, 
+    Token *root,
+    const Token child,
     Arena *arena)
 {
     if (!child.value) return; /* a comment */
@@ -162,9 +162,9 @@ insert_token(
 
 static void
 set_token_keystr(
-    Token *t, 
-    const char *str, 
-    const int len, 
+    Token *t,
+    const char *str,
+    const int len,
     Arena *arena)
 {
     KeyHash *h = Arena_malloc(arena, sizeof(KeyHash));
@@ -178,7 +178,7 @@ set_token_keystr(
 
 
 /* may overlaps */
-static inline void
+static void
 strmove(char *dest, char *src)
 {
     while((*src) != '\0') {
@@ -223,9 +223,9 @@ tinyfy(char *str)
 
 static void
 set_token_staticstr(
-    Token *t, 
-    const char *str, 
-    const int len, 
+    Token *t,
+    const char *str,
+    const int len,
     Arena *arena)
 {
     /* build a temporary array to store mignified string in arena */
@@ -247,8 +247,8 @@ set_token_staticstr(
 
 static char*
 get_filename(
-    char *str, 
-    const int len, 
+    char *str,
+    const int len,
     Arena *arena)
 {
     char *r = Arena_malloc(arena, len + 1);
@@ -262,8 +262,8 @@ static const char token_start[] = "{{";
 static const char token_end[]   = "}}";
 static int
 do_tokenize(
-    Token *t, 
-    char **current, 
+    Token *t,
+    char **current,
     Arena *arena)
 {
     int s;
@@ -392,7 +392,7 @@ print_token(Token *t)
 
 static Token
 do_load(
-    const char *filename, 
+    const char *filename,
     Arena *arena)
 {
     /* read file into memory */
@@ -401,7 +401,7 @@ do_load(
     assert(fp != NULL);
 
     fseek(fp, 0, SEEK_END);
-    long fsize = ftell(fp);
+    unsigned long fsize = ftell(fp);
     rewind(fp);
 
     char *str = malloc(fsize + 1);
@@ -434,8 +434,8 @@ do_load(
 
 static void
 insert_res(
-    Ressource **res, 
-    const char *filename, 
+    Ressource **res,
+    const char *filename,
     Arena *arena)
 {
     if (*res == NULL) {

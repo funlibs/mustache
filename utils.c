@@ -8,7 +8,7 @@
 
 
 /*******************************************************************************
- * Utilities 
+ * Utilities
  ******************************************************************************/
 unsigned long
 djb2_hash(const char *str)
@@ -138,7 +138,7 @@ Mstc_dict_new()
 void
 Mstc_dict_setValue(
     Dict *dict,
-    char *key, 
+    char *key,
     const char *value)
 {
     KeyHash h;
@@ -150,8 +150,8 @@ Mstc_dict_setValue(
 
 void
 Mstc_dict_setValue2(
-    Dict *dict, 
-    const KeyHash *key, 
+    Dict *dict,
+    const KeyHash *key,
     const char *value)
 {
     DictEntry   *entry;
@@ -164,7 +164,7 @@ Mstc_dict_setValue2(
     } else {
 
         entry = *pentry;
-        int vlen = strlen(value);
+        unsigned int vlen = strlen(value);
         while(1) {
 
             if (
@@ -198,7 +198,7 @@ Mstc_dict_setValue2(
 
 char*
 Mstc_dict_getValue(
-    const Dict *dict, 
+    const Dict *dict,
     char *key)
 {
     KeyHash h;
@@ -210,7 +210,7 @@ Mstc_dict_getValue(
 
 char*
 Mstc_dict_getValue2(
-    const Dict *dict, 
+    const Dict *dict,
     const KeyHash *key)
 {
     char* ret = dict_search_value(dict->entries[key->hash], key->str);
@@ -224,7 +224,7 @@ Mstc_dict_getValue2(
 
 Dict*
 Mstc_dict_addSectionItem(
-    Dict *dict, 
+    Dict *dict,
     char *key)
 {
     KeyHash h;
@@ -236,7 +236,7 @@ Mstc_dict_addSectionItem(
 
 Dict*
 Mstc_dict_addSectionItem2(
-    Dict *dict, 
+    Dict *dict,
     const KeyHash *key)
 {
     DictEntry *entry;
@@ -278,8 +278,8 @@ Mstc_dict_addSectionItem2(
 
 Dict**
 Mstc_dict_getSection(
-    const Dict *dict, 
-    char *key, 
+    const Dict *dict,
+    char *key,
     int *nelem)
 {
     KeyHash h;
@@ -291,8 +291,8 @@ Mstc_dict_getSection(
 
 Dict**
 Mstc_dict_getSection2(
-    const Dict *dict, 
-    const KeyHash *key, 
+    const Dict *dict,
+    const KeyHash *key,
     int *nelem)
 {
     DictEntry *entry = dict->entries[key->hash];
@@ -332,8 +332,8 @@ Mstc_dict_getSection2(
 
 void
 Mstc_dict_setShowSection(
-    Dict *dict, 
-    char *key, 
+    Dict *dict,
+    char *key,
     const bool show)
 {
     KeyHash h;
@@ -345,8 +345,8 @@ Mstc_dict_setShowSection(
 
 void
 Mstc_dict_setShowSection2(
-    Dict *dict, 
-    const KeyHash *key, 
+    Dict *dict,
+    const KeyHash *key,
     const bool show)
 {
     DictEntry   *entry;
@@ -390,7 +390,7 @@ Mstc_dict_setShowSection2(
 
 bool
 Mstc_dict_getShowSection(
-    const Dict *dict, 
+    const Dict *dict,
     char *key)
 {
     KeyHash h;
@@ -402,7 +402,7 @@ Mstc_dict_getShowSection(
 
 bool
 Mstc_dict_getShowSection2(
-    const Dict *dict, 
+    const Dict *dict,
     const KeyHash *key)
 {
     DictEntry *entry = dict->entries[key->hash];
@@ -411,14 +411,14 @@ Mstc_dict_getShowSection2(
 
       if (strcmp(entry->key, key->str) == 0)
       {
-          if (entry->type == BOOL_SECTION_ENTRY) 
+          if (entry->type == BOOL_SECTION_ENTRY)
           { /* no need to go further */
 
                return *((bool*) entry->value);
 
           } else if (
                  (entry->type == SECTION_ENTRY) &&
-                 (((SectionElems*) entry->value)->nelems > 0)) 
+                 (((SectionElems*) entry->value)->nelems > 0))
           {
 
                 section_has_data = true;
@@ -456,7 +456,7 @@ dict_new(Arena *arena)
 
 static char*
 dict_search_value(
-    DictEntry *entry, 
+    DictEntry *entry,
     const char *key)
 {
     if (!entry)
@@ -472,7 +472,7 @@ dict_search_value(
 
 static Dict*
 dict_get_next_section_element(
-    Dict *dict, 
+    Dict *dict,
     DictEntry *entry)
 {
     SectionElems *e = (SectionElems*) entry->value;
@@ -492,8 +492,8 @@ dict_get_next_section_element(
 
 static DictEntry*
 dict_create_entry(
-    Arena *arena, 
-    const char *key, 
+    Arena *arena,
+    const char *key,
     const char *value)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
@@ -509,7 +509,7 @@ dict_create_entry(
 
 static DictEntry*
 dict_create_section(
-    Arena *arena, 
+    Arena *arena,
     const char *key)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
@@ -528,8 +528,8 @@ dict_create_section(
 
 static DictEntry*
 dict_create_bool_entry(
-    Arena *arena, 
-    const char *key, 
+    Arena *arena,
+    const char *key,
     const bool show)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
