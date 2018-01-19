@@ -1,6 +1,6 @@
 # mustache Makefile
 #
-# make: will build libmustache.a
+# make all: will build libmustache.a
 # make tests: will build the tests
 # make check: will run them
 # make clean: clean everything
@@ -41,28 +41,21 @@ load.o: load.c mustache.h
 utils.o: utils.c mustache.h
 	$(CC) $(CFLAGS) -c utils.c -o utils.o
 
-
-# TESTS directory
-.PHONY: tests check profile
-
-SUBOPTS += CFLAGS="$(CFLAGS)"
-SUBOPTS += LDFLAGS="$(LDFLAGS)"
-SUBOPTS += MUSTACHE_DIR="$(MUSTACHE_DIR)"
-SUBOPTS += RM="$(RM)"
-
-tests: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS) clean tests
-
-check: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS) clean check
-
-profile: libmustache.a
-	@$(MAKE) -C tests $(SUBOPTS) clean profile
+tests: tests.c libmustache.a
+	$(CC) $(CFLAGS) tests.c $(LDFLAGS) -o tests
 
 
-# clean
-.PHONY: clean
-
+.PHONY: clean check profile
 clean:
-	$(RM) $(OBJECTS) libmustache.a
-	$(MAKE) -C tests $(SUBOPTS) clean
+	$(RM) $(OBJECTS) libmustache.a tests samples/perf.data*
+
+check: tests
+	cd samples; ../tests
+
+profile: tests
+	cd samples; sudo perf stat -d ../tests 300000 > /dev/null
+	@echo "Press enter to continue"; read A
+	cd samples; sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ../tests 300000 > /dev/null
+	cd samples; sudo perf report
+	@#cd samples; valgrind ../tests.bin 10 > /dev/null;
+
