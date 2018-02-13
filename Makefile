@@ -28,20 +28,14 @@ RM      = rm -f
 all: libmustache.a
 	$(STRIP) libmustache.a
 
-OBJECTS = utils.o load.o expand.o
+OBJECTS = mustache_utils.o mustache_load.o mustache_expand.o
 
 libmustache.a: $(OBJECTS)
 	$(AR) rcs libmustache.a $(OBJECTS)
 
-expand.o: expand.c mustache.h
-	$(CC) $(CFLAGS) -c expand.c -o expand.o
-
-load.o: load.c mustache.h
-	$(CC) $(CFLAGS) -c load.c -o load.o
-
-utils.o: utils.c mustache.h
-	$(CC) $(CFLAGS) -c utils.c -o utils.o
-
+mustache_expand.o: mustache_expand.c mustache.h
+mustache_load.o: mustache_load.c mustache.h
+mustache_utils.o: mustache_utils.c mustache.h
 
 # TESTS directory
 .PHONY: tests check profile
