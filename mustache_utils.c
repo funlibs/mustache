@@ -416,10 +416,14 @@ Mstc_dict_getShowSection2(
 
                return *((bool*) entry->value);
 
-          } else if (
-                 (entry->type == SECTION_ENTRY) &&
-                 (((SectionElems*) entry->value)->nelems > 0))
-          {
+          } else if (entry->type == SECTION_ENTRY) {
+
+            if (((SectionElems*) entry->value)->nelems > 0)
+                section_has_data = true;
+            else
+                section_has_data = false;
+
+          } else {
 
                 section_has_data = true;
 
