@@ -36,7 +36,7 @@ mustache_expand.o: mustache_expand.c mustache.h
 mustache_load.o: mustache_load.c mustache.h
 mustache_utils.o: mustache_utils.c mustache.h
 tests.o: tests.c mustache.h
-tests:
+tests: tests.o
 	$(CC) tests.o -o tests $(LDFLAGS)
 
 .PHONY: clean check profile

@@ -11,7 +11,6 @@
 #define RES_DICT_INIT_SIZE 50
 #define ROOT_SECTION_TOKEN_INITIAL_SIZE 20
 
-
 /* forward declaration */
 static Token do_load(const char*, Arena*);
 static void do_trim(char*);
@@ -20,7 +19,7 @@ static void set_token_staticstr(Token*, const char*, const int, Arena*);
 static char* get_filename(char*, const int, Arena*);
 static int do_tokenize(Token*, char**, Arena*);
 static void print_token(Token*);
-static void insert_res(Ressource**, const char*, Arena*);
+static Ressource* insert_res(Ressource**, const char*, Arena*);
 
 
 RessourceStore*
@@ -35,32 +34,21 @@ Mstc_ressource_create()
 }
 
 
-int
+Ressource*
 Mstc_ressource_load(
     RessourceStore *store,
     const char *filename)
 {
     int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
-    insert_res(&store->res[hash], filename, store->arena);
-    return hash;
+    return insert_res(&store->res[hash], filename, store->arena);
 }
-
-
-int
-Mstc_ressource_getId(
-    RessourceStore *store,
-    const char *filename)
-{
-    return Mstc_ressource_load(store, filename);
-}
-
 
 Ressource*
 Mstc_ressource_get(
     RessourceStore *store,
-    const int id)
+    const char *filename)
 {
-    return store->res[id];
+    return Mstc_ressource_load(store, filename);
 }
 
 
@@ -432,7 +420,7 @@ do_load(
 }
 
 
-static void
+static Ressource*
 insert_res(
     Ressource **res,
     const char *filename,
@@ -444,11 +432,11 @@ insert_res(
         strcpy((*res)->filename, filename);
         (*res)->next = NULL;
         (*res)->root = do_load(filename, arena);
-        return;
+        return (*res);
     } else if (strcmp((*res)->filename, filename) == 0) { /* allready loaded */
-        return;
+        return (*res);
     } else {    /* find next */
-        insert_res(&(*res)->next, filename, arena);
+        return insert_res(&(*res)->next, filename, arena);
     }
 }
 

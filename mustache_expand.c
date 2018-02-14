@@ -7,6 +7,12 @@
 
 #include "mustache.h"
 
+#define EXP_OUT_MAX 5000
+typedef struct ExpandOutput {
+    char *out;
+    unsigned int used;
+    unsigned int max;
+} ExpandOutput;
 
 /* token handlers */
 static void handle_string(
@@ -80,36 +86,19 @@ do_escape(
 
 
 /* api */
-void
-Mstc_expand_run(
+char*
+Mstc_expand(
     const Ressource *ressource,
-    const Dict *dict,
-    ExpandOutput* exp)
+    const Dict *dict)
 {
-    exp->used = 0; /* reset */
-    handle_root_section(&ressource->root, dict, exp);
-    exp->out[exp->used] = '\0';
+    ExpandOutput exp;
+    exp.out = malloc(EXP_OUT_MAX);
+    exp.max = EXP_OUT_MAX;
+    exp.used = 0;
+    handle_root_section(&ressource->root, dict, &exp);
+    exp.out[exp.used] = '\0';
+    return exp.out;
 }
-
-
-ExpandOutput*
-Mstc_expand_init(int max)
-{
-    ExpandOutput *exp = malloc(sizeof(ExpandOutput));
-    exp->out = malloc(max);
-    exp->max = max;
-    exp->used = 0;
-    return exp;
-}
-
-
-void
-Mstc_expand_free(ExpandOutput* exp)
-{
-    free(exp->out);
-    free(exp);
-}
-
 
 /* handlers */
 static void

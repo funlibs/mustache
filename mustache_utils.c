@@ -423,7 +423,7 @@ Mstc_dict_getShowSection2(
             else
                 section_has_data = false;
 
-          } else {
+          } else { /* TEXT_ENTRY */
 
                 section_has_data = true;
 

@@ -89,27 +89,24 @@ main(int argc, char **argv) {
     init_keyhash();
 
     RessourceStore *store = Mstc_ressource_create();
-    int index = Mstc_ressource_load(store, testfile);
-
-    Ressource *res = Mstc_ressource_get(store, index);
+    Ressource *ressource = Mstc_ressource_load(store, testfile);
 
     int i;
-    ExpandOutput *exp = Mstc_expand_init(3000);
     Dict *d;
+    char *output;
     for (i=0; i<count; i++) {
         d = simulate_request();
-        Mstc_expand_run(res, d, exp);
+        output = Mstc_expand(ressource, d);
         Mstc_dict_free(d);
+        free(output);
     }
 
 
     /* one more to print out */
     d = simulate_request();
-    Mstc_expand_run(res, d, exp);
-
-    printf("%s\n",exp->out);
-
-    Mstc_expand_free(exp);
+    output = Mstc_expand(ressource, d);
+    printf("%s\n",output);
+    free(output);
     Mstc_dict_free(d);
     Mstc_ressource_free(store);
 
