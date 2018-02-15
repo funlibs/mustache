@@ -3,8 +3,6 @@
 
 #include "mustache_api.h"
 
-static char testfile[] = "sample.html.tpl";
-
 Dict*
 simulate_request() {
     Dict *dict = Mstc_dict_new();
@@ -38,13 +36,14 @@ simulate_request() {
 int
 main(int argc, char **argv) {
     int count;
-    if (argc > 1)
+    if (argc > 2)
         count = atoi(argv[1]);
     else
         count = 1000;
 
+
     TemplateStore *store = Mstc_template_create();
-    Template *template = Mstc_template_get(store, testfile);
+    Template *template = Mstc_template_get(store, argv[1]);
 
     Dict *dict;
     char *output;

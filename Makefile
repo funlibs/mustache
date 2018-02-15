@@ -22,25 +22,25 @@
 #
 #     /* populate the dict with some values */
 #     Mstc_dict_setValue(d, "title", "%s", "hello world");
-# 
+#
 #     Dict *sub = Mstc_dict_addSectionItem(d, "mylist);
 #     Mstc_dict_setValue(sub, "elem1", "%s", "hello1");
 #     Dict *sub = Mstc_dict_addSectionItem(d, "mylist);
 #     Mstc_dict_setValue(sub, "elem2", "%s", "hello2");
-# 
+#
 #     char *out = Mstc_expand(t,d);
 #     Mstc_dict_free(d);
 #
 #     printf("%s", out);
 #     free(out);
-#     
+#
 #     Mstc_template_free(s);
 #     return 0;
 # }
 #
 # $ cc -I. -static myprog.c -L. -lmustache -o myprog
 
-CFLAGS  = -Wall -ggdb -O2 -I$(PWD)
+CFLAGS  = -std=c99 -Wall -ggdb -O2 -I$(PWD)
 LDFLAGS = -L$(PWD) -lmustache
 STRIP   = strip --strip-unneeded
 RM      = rm -f
@@ -65,7 +65,7 @@ clean:
 	$(RM) $(OBJECTS) libmustache.a tests samples/perf.data*
 
 check: tests
-	cd samples; ../tests
+	./tests samples/sample.html.tpl
 
 profile: tests
 	cd samples; sudo perf stat -d ../tests 300000 > /dev/null

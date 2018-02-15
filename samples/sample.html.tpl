@@ -6,11 +6,11 @@
     </head>
     <body>
 
-        {{>sample_head.html.tpl}}
+        {{> sample_head.html.tpl  }}
 
         <h1>Wellcome to mustache!</h1>
 
-        <p>Héllo {{name}} of genre {{genre}}</p>
+        <p>Héllo {{name}} of genre {{ genre }}</p>
 
         {{?pets}}
             <p>...and your pets are:</p>
@@ -28,7 +28,7 @@
 
         {{^undef}}
             {{^undef2}}
-                <p>{{url}}</p>
+                <p>{{url }}</p>
             {{/undef2}}
         {{/undef}}
 
@@ -48,6 +48,6 @@
         {{^childs}}
             <p>..and you have no childs</p>
         {{/childs}}
-        {{>sample_foot.html.tpl}}
+        {{> foot/sample_foot.html.tpl }}
     </body>
 </html>

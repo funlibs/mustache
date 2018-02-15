@@ -7,4 +7,4 @@
     </ul>
 </div>
 
-{{>sample_copyrights.html.tpl}}
+{{>../sample_copyrights.html.tpl}}
