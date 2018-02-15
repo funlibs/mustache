@@ -87,6 +87,7 @@ KeyHash Mstc_dict_genKeyHash(char *key);
 Dict* Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key);
 
 int Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *frmt,...);
+void Mstc_dict_setValue3(Dict *dict, const KeyHash *key, const char *value);
 char* Mstc_dict_getValue(const Dict *dict, char *key);
 char* Mstc_dict_getValue2(const Dict *dict, const KeyHash *key);
 Dict** Mstc_dict_getSection(const Dict *dict, char *key, int *nelem);

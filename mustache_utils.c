@@ -167,6 +167,17 @@ Mstc_dict_setValue(
     return nchars;
 }
 
+void
+Mstc_dict_setValue3(
+    Dict *dict,
+    const KeyHash *key,
+    const char *value)
+{
+    char *v = Arena_malloc(dict->arena, strlen(value) + 1);
+    strcpy(v, value);
+    dict_set_value(dict, key, v);
+}
+
 int
 Mstc_dict_setValue2(
     Dict *dict,
