@@ -137,9 +137,8 @@ Mstc_dict_new()
     return d;
 }
 
-
 int
-Mstc_dict_setValue(
+Mstc_dict_setFormat(
     Dict *dict,
     char *key,
     const char *format, ...)
@@ -168,34 +167,18 @@ Mstc_dict_setValue(
 }
 
 void
-Mstc_dict_setValue3(
+Mstc_dict_setValue(
     Dict *dict,
-    const KeyHash *key,
+    char *key,
     const char *value)
 {
+    KeyHash h;
+    h.str = key;
+    h.hash = djb2_hash(key) % DICT_MAX_SIZE;
     char *v = Arena_malloc(dict->arena, strlen(value) + 1);
+
     strcpy(v, value);
-    dict_set_value(dict, key, v);
-}
-
-int
-Mstc_dict_setValue2(
-    Dict *dict,
-    const KeyHash *key,
-    const char *format, ...)
-{
-    char *value;
-    int nchars;
-    va_list va;
-
-    va_start(va, format);
-    nchars = vsnprintf(NULL, 0, format, va);
-    value  = Arena_malloc(dict->arena, nchars);
-    vsnprintf(value, nchars, format, va);
-    va_end(va);
-
-    dict_set_value(dict, key, value);
-    return nchars;
+    dict_set_value(dict, &h, v);
 }
 
 void

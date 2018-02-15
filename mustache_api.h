@@ -29,8 +29,11 @@ extern char* Mstc_expand(const Template*, const Dict*);
  * free with Mstc_dict_free(). */
 extern Dict* Mstc_dict_new();
 
- /* Set text value. Return the len of the formated string */
-extern int Mstc_dict_setValue(Dict *dict, char *key, const char *format, ...);
+/* Set simple text */
+extern void Mstc_dict_setValue(Dict *dict, char *key, const char *value);
+
+/* Set text with printf like arguments. Return the len of the formated string */
+extern int Mstc_dict_setFormat(Dict *dict, char *key, const char *format, ...);
 
 /* inconditionaly hide or show section */
 extern void Mstc_dict_setShowSection(Dict *dict, char *key, const bool show);

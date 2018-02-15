@@ -1,6 +1,6 @@
-/* MIT License Copyright 2018  Sebastien Serre 
- * 
- * This file contains an extra API ovoiding the hash algorithm for each dict 
+/* MIT License Copyright 2018  Sebastien Serre
+ *
+ * This file contains an extra API ovoiding the hash algorithm for each dict
  * call, using a KeyHash structure.
  */
 
@@ -77,16 +77,15 @@ KeyHash Mstc_dict_genKeyHash(char *key);
 
 /**
  * Every functions left exist in two versions. The one present in mustache_api
- * use a string as key for the dict and compute the hash at each call. 
- * These ones second (sufixed with "2") use the KeyHash struct embeding both 
- * the string and the hash. The second should be used if performance is a 
+ * use a string as key for the dict and compute the hash at each call.
+ * These ones second (sufixed with "2") use the KeyHash struct embeding both
+ * the string and the hash. The second should be used if performance is a
  * matter.
- * 
+ *
  * The get* functions are used by the Mstc_expand function.
  */
 Dict* Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key);
 
-int Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *frmt,...);
 void Mstc_dict_setValue3(Dict *dict, const KeyHash *key, const char *value);
 char* Mstc_dict_getValue(const Dict *dict, char *key);
 char* Mstc_dict_getValue2(const Dict *dict, const KeyHash *key);
