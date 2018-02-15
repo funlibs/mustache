@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-#include "mustache.h"
+#include "mustache_api.h"
 
 
 /*******************************************************************************
@@ -111,9 +113,10 @@ static char empty[] = "";
 static Dict* dict_new(Arena*);
 static char* dict_search_value(DictEntry*, const char*);
 static Dict* dict_get_next_section_element(Dict*, DictEntry*);
-static DictEntry* dict_create_entry(Arena*, const char*, const char*);
+static DictEntry* dict_create_entry(Arena*, const char*, char*);
 static DictEntry* dict_create_section(Arena*, const char*);
 static DictEntry* dict_create_bool_entry(Arena*, const char*, const bool);
+void dict_set_value(Dict *dict, const KeyHash *key, char *value);
 
 
 /* interface */
@@ -135,24 +138,60 @@ Mstc_dict_new()
 }
 
 
-void
+int
 Mstc_dict_setValue(
     Dict *dict,
     char *key,
-    const char *value)
+    const char *format, ...)
 {
+    char *value;
+    va_list va;
+    int nchars;
     KeyHash h;
+
+    va_start(va, format);
+    nchars = vsnprintf(NULL, 0, format, va);
+    va_end(va);
+
+    nchars++;
+    value = Arena_malloc(dict->arena, nchars * 2);
+
+    va_start(va, format);
+    vsnprintf(value, nchars * 2, format, va);
+    va_end(va);
+
     h.str = key;
     h.hash = djb2_hash(key) % DICT_MAX_SIZE;
-    Mstc_dict_setValue2(dict, &h, value);
+
+    dict_set_value(dict, &h, value);
+    return nchars;
 }
 
-
-void
+int
 Mstc_dict_setValue2(
     Dict *dict,
     const KeyHash *key,
-    const char *value)
+    const char *format, ...)
+{
+    char *value;
+    int nchars;
+    va_list va;
+
+    va_start(va, format);
+    nchars = vsnprintf(NULL, 0, format, va);
+    value  = Arena_malloc(dict->arena, nchars);
+    vsnprintf(value, nchars, format, va);
+    va_end(va);
+
+    dict_set_value(dict, key, value);
+    return nchars;
+}
+
+void
+dict_set_value(
+    Dict *dict,
+    const KeyHash *key,
+    char *value)
 {
     DictEntry   *entry;
     DictEntry **pentry = &dict->entries[key->hash];
@@ -164,7 +203,6 @@ Mstc_dict_setValue2(
     } else {
 
         entry = *pentry;
-        unsigned int vlen = strlen(value);
         while(1) {
 
             if (
@@ -173,9 +211,7 @@ Mstc_dict_setValue2(
             {
                 /* update */
 
-                if (vlen > strlen(entry->value))
-                    entry->value = Arena_malloc(dict->arena, vlen + 1);
-                strcpy(entry->value, value);
+                entry->value = value;
                 break;
 
             } else if (!entry->next) {
@@ -498,15 +534,14 @@ static DictEntry*
 dict_create_entry(
     Arena *arena,
     const char *key,
-    const char *value)
+    char *value)
 {
     DictEntry *entry = Arena_malloc(arena, sizeof(DictEntry));
     entry->next = NULL;
     entry->type = STR_ENTRY;
     entry->key = Arena_malloc(arena, strlen(key) + 1);
-    entry->value = Arena_malloc(arena, strlen(value) + 1);
+    entry->value = value;
     strcpy(entry->key, key);
-    strcpy(entry->value, value);
     return entry;
 }
 

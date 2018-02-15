@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "mustache.h"
+#include "mustache_api.h"
 
 #define RES_ARENA_BASE_SIZE 16777216 /* around 15 mb */
 #define RES_DICT_INIT_SIZE 50
@@ -19,47 +19,47 @@ static void set_token_staticstr(Token*, const char*, const int, Arena*);
 static char* get_filename(char*, const int, Arena*);
 static int do_tokenize(Token*, char**, Arena*);
 static void print_token(Token*);
-static Ressource* insert_res(Ressource**, const char*, Arena*);
+static Template* insert_res(Template**, const char*, Arena*);
 
 
-RessourceStore*
-Mstc_ressource_create()
+TemplateStore*
+Mstc_template_create()
 {
     Arena *arena = Arena_new(RES_ARENA_BASE_SIZE);
-    RessourceStore *store = Arena_malloc(arena, sizeof(RessourceStore));
+    TemplateStore *store = Arena_malloc(arena, sizeof(TemplateStore));
     store->arena = arena;
     store->res = Arena_calloc(arena,
-            RES_DICT_INIT_SIZE * sizeof(Ressource*));
+            RES_DICT_INIT_SIZE * sizeof(Template*));
     return store;
 }
 
 
-Ressource*
-Mstc_ressource_load(
-    RessourceStore *store,
+Template*
+Mstc_template_load(
+    TemplateStore *store,
     const char *filename)
 {
     int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
     return insert_res(&store->res[hash], filename, store->arena);
 }
 
-Ressource*
-Mstc_ressource_get(
-    RessourceStore *store,
+Template*
+Mstc_template_get(
+    TemplateStore *store,
     const char *filename)
 {
-    return Mstc_ressource_load(store, filename);
+    return Mstc_template_load(store, filename);
 }
 
 
 void
-Mstc_ressource_free(RessourceStore *store)
+Mstc_template_free(TemplateStore *store)
 {
     Arena_free(store->arena);
 }
 
 
-void Mstc_ressource_printTokenStructure(Ressource *t)
+void Mstc_template_printTokenStructure(Template *t)
 {
     print_token(&t->root);
 }
@@ -73,7 +73,7 @@ const char type_boolsection[] = "bool_section";
 const char type_invsection[]  = "inv_section";
 const char type_string[]      = "string";
 char*
-Mstc_ressource_getTypeFromCode(TokenType t)
+Mstc_template_getTypeFromCode(TokenType t)
 {
     switch(t) {
         case ROOT_SECTION_TOKEN:
@@ -366,7 +366,7 @@ print_token(Token *t)
         out = ((KeyHash*) t->value)->str;
     }
     printf("%*sTOKEN %s value: %s (%i)\n", pos, "",
-            Mstc_ressource_getTypeFromCode(t->type), out, j);
+            Mstc_template_getTypeFromCode(t->type), out, j);
     if (t->nchilds > 0) {
         pos += 4;
         for (i=0; i<t->nchilds; i++) {
@@ -420,14 +420,14 @@ do_load(
 }
 
 
-static Ressource*
+static Template*
 insert_res(
-    Ressource **res,
+    Template **res,
     const char *filename,
     Arena *arena)
 {
     if (*res == NULL) {
-        *res = Arena_malloc(arena, sizeof(Ressource));
+        *res = Arena_malloc(arena, sizeof(Template));
         (*res)->filename = Arena_malloc(arena, sizeof(char) * strlen(filename));
         strcpy((*res)->filename, filename);
         (*res)->next = NULL;

@@ -1,4 +1,9 @@
-/* MIT License Copyright 2018  Sebastien Serre */
+/* MIT License Copyright 2018  Sebastien Serre 
+ * 
+ * This file contains an extra API ovoiding the hash algorithm for each dict 
+ * call, using a KeyHash structure.
+ */
+
 
 #ifndef _MUSTACHE_H_
 #define _MUSTACHE_H_
@@ -65,65 +70,31 @@ typedef struct KeyHash {
 
 
 /*
- * Will create a "main" dictionary. This is the one we will want to
- * freed with Mstc_dict_free().
- */
-Dict* Mstc_dict_new();
-
-/*
  * Generate hashed key. key must be accessible (allocated) for use.
+ * Used with the second versions of the dict api.
  */
 KeyHash Mstc_dict_genKeyHash(char *key);
 
 /**
- *
- * Every functions left exist in two versions. The first use a string as key
- * for the dict and compute the hash at each call. The second (sufixed with "2")
- * use the KeyHash struct embeding both the string and the hash. The second
- * should be used if performance is a matter.
- *
+ * Every functions left exist in two versions. The one present in mustache_api
+ * use a string as key for the dict and compute the hash at each call. 
+ * These ones second (sufixed with "2") use the KeyHash struct embeding both 
+ * the string and the hash. The second should be used if performance is a 
+ * matter.
+ * 
+ * The get* functions are used by the Mstc_expand function.
  */
-
-/*
- * Set and get text values by key string.
- */
-void Mstc_dict_setValue(Dict *dict, char *key, const char *value);
-void Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *value);
-
-char* Mstc_dict_getValue(const Dict *dict, char *key);
-char* Mstc_dict_getValue2(const Dict *dict, const KeyHash *key);
-
-
-/*
- * Create and get sub dictionaries.
- * showSection(false), will hide a simple sections (of the same name) that
- * contains some values and which would have been evaluated to true without
- * this explicit false.
- * showsection(true), will show content of the section.
- */
-Dict* Mstc_dict_addSectionItem(Dict *dict, char *key);
 Dict* Mstc_dict_addSectionItem2(Dict *dict, const KeyHash *key);
 
+int Mstc_dict_setValue2(Dict *dict, const KeyHash *key, const char *frmt,...);
+char* Mstc_dict_getValue(const Dict *dict, char *key);
+char* Mstc_dict_getValue2(const Dict *dict, const KeyHash *key);
 Dict** Mstc_dict_getSection(const Dict *dict, char *key, int *nelem);
 Dict** Mstc_dict_getSection2(const Dict *dict, const KeyHash *key, int *nelem);
-
-void Mstc_dict_setShowSection(Dict *dict, char *key, const bool show);
 void Mstc_dict_setShowSection2(Dict *dict, const KeyHash *key, const bool show);
-
 bool Mstc_dict_getShowSection(const Dict *dict, char *key);
 bool Mstc_dict_getShowSection2(const Dict *dict, const KeyHash *key);
 
-/*
- * Free the main dictionnary.
- */
-void Mstc_dict_free(Dict* dict);
-
-
-/*******************************************************************************
- *
- * API
- *
- ******************************************************************************/
 
 /*******************************************************************************
  * Loader
@@ -152,65 +123,24 @@ struct Token {
     int       size;
 };
 
-typedef struct Ressource Ressource;
-struct Ressource {
+typedef struct Template Template;
+struct Template {
     char *filename;
     Token root;
-    Ressource *next;
+    Template *next;
 };
 
-/* all tplRessources loaded */
-typedef struct RessourceStore RessourceStore;
-struct RessourceStore {
+/* all tplTemplates loaded */
+typedef struct TemplateStore TemplateStore;
+struct TemplateStore {
     Arena *arena;
-    Ressource **res;
+    Template **res;
 };
 
-char* Mstc_ressource_getTypeFromCode(TokenType);
-
-/*
- * Initialize a new store
- */
-extern RessourceStore* Mstc_ressource_create();
-
-/*
- * Load file name, store if not done, and return his ressource id.
- */
-extern int Mstc_ressource_load(RessourceStore *store, const char *fileName);
-
-/*
- * Return ressource id of filename.
- */
-extern int Mstc_ressource_getId(RessourceStore *store, const char *fileName);
-
-/*
- * Get the ressource
- */
-extern Ressource*
-Mstc_ressource_get(RessourceStore*, const int);
-
-/*
- * Free everything
- */
-extern void Mstc_ressource_free(RessourceStore *store);
-
+char* Mstc_template_getTypeFromCode(TokenType);
 /*
  * For debuging purpose
  */
-extern void Mstc_ressource_printTokenStructure(Ressource *t);
-
-
-/*******************************************************************************
- * Expander
- ******************************************************************************/
-typedef struct ExpandOutput {
-    char *out;
-    unsigned int used;
-    unsigned int max;
-} ExpandOutput;
-
-extern ExpandOutput* Mstc_expand_init(int max);
-extern void Mstc_expand_free(ExpandOutput*);
-extern void Mstc_expand_run(const Ressource*, const Dict*, ExpandOutput*);
+extern void Mstc_template_printTokenStructure(Template *t);
 
 #endif /* _MUSTACHE_H_ */

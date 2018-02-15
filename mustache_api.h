@@ -14,7 +14,7 @@ extern TemplateStore* Mstc_template_create();
 /* Free everything */
 extern void Mstc_template_free(TemplateStore *store);
 
-/* Load file name, store it if not done, and return it.*/
+/* Get template "filename", load it if not done. */
 extern Template*
 Mstc_template_get(TemplateStore *store, const char *filename);
 
@@ -29,8 +29,8 @@ extern char* Mstc_expand(const Template*, const Dict*);
  * free with Mstc_dict_free(). */
 extern Dict* Mstc_dict_new();
 
- /* Set text value */
-extern void Mstc_dict_setValue(Dict *dict, char *key, const char *format, ...);
+ /* Set text value. Return the len of the formated string */
+extern int Mstc_dict_setValue(Dict *dict, char *key, const char *format, ...);
 
 /* inconditionaly hide or show section */
 extern void Mstc_dict_setShowSection(Dict *dict, char *key, const bool show);

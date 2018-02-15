@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "mustache.h"
+#include "mustache_api.h"
 
 #define EXP_OUT_MAX 5000
 typedef struct ExpandOutput {
@@ -88,14 +88,14 @@ do_escape(
 /* api */
 char*
 Mstc_expand(
-    const Ressource *ressource,
+    const Template *template,
     const Dict *dict)
 {
     ExpandOutput exp;
     exp.out = malloc(EXP_OUT_MAX);
     exp.max = EXP_OUT_MAX;
     exp.used = 0;
-    handle_root_section(&ressource->root, dict, &exp);
+    handle_root_section(&template->root, dict, &exp);
     exp.out[exp.used] = '\0';
     return exp.out;
 }
