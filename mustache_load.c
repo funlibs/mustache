@@ -4,7 +4,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "mustache_api.h"
 
@@ -400,8 +399,11 @@ do_load(
 
     /* read file into memory */
     FILE *fp;
-    fp = fopen(filename, "r");
-    assert(fp != NULL);
+    if ((fp = fopen(filename, "r")) == NULL) {
+        fprintf(stderr, "MUSTACHE Can not open template file. ");
+        perror(filename);
+        abort();
+    }
 
     fseek(fp, 0, SEEK_END);
     unsigned long fsize = ftell(fp);
