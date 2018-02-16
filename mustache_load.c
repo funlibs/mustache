@@ -35,20 +35,30 @@ Mstc_template_create()
 
 
 Template*
-Mstc_template_load(
-    TemplateStore *store,
-    const char *filename)
+Mstc_template_open(const char *filename)
 {
-    int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
-    return insert_res(&store->res[hash], filename, store->arena);
+    Arena *arena  = Arena_new(2000);
+    Template *tpl = Arena_malloc(arena, sizeof(Template));
+    tpl->filename = Arena_malloc(arena, strlen(filename) + 1);
+    strcpy(tpl->filename, filename);
+    tpl->next = (Template*) arena; /* !!! */
+    tpl->root = do_load(filename, arena);
+    return tpl;
 }
+
+void
+Mstc_template_close(Template *tpl) {
+    Arena_free((Arena*) tpl->next);
+}
+
 
 Template*
 Mstc_template_get(
     TemplateStore *store,
     const char *filename)
 {
-    return Mstc_template_load(store, filename);
+    int hash = djb2_hash(filename) % RES_DICT_INIT_SIZE;
+    return insert_res(&store->res[hash], filename, store->arena);
 }
 
 

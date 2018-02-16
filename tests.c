@@ -37,7 +37,7 @@ int
 main(int argc, char **argv) {
     int count;
     if (argc > 2)
-        count = atoi(argv[1]);
+        count = atoi(argv[2]);
     else
         count = 1000;
 

@@ -6,7 +6,14 @@
 
 
 /*******************************************************************************
- * templates
+ * simple templates
+ ******************************************************************************/
+extern Template* Mstc_template_open(const char *filename);
+extern void Mstc_template_close(Template *tpl);
+
+
+/*******************************************************************************
+ * templates store
  ******************************************************************************/
 /* Initialize a new store */
 extern TemplateStore* Mstc_template_create();
@@ -15,11 +22,7 @@ extern TemplateStore* Mstc_template_create();
 extern void Mstc_template_free(TemplateStore *store);
 
 /* Get template "filename", load it if not done. */
-extern Template*
-Mstc_template_get(TemplateStore *store, const char *filename);
-
-/* Expand template with dict values */
-extern char* Mstc_expand(const Template*, const Dict*);
+extern Template* Mstc_template_get(TemplateStore *store, const char *filename);
 
 
 /*******************************************************************************
@@ -33,7 +36,7 @@ extern Dict* Mstc_dict_new();
 extern void Mstc_dict_setValue(Dict *dict, char *key, const char *value);
 
 /* Set text with printf like arguments. Return the len of the formated string */
-extern int Mstc_dict_setFormat(Dict *dict, char *key, const char *format, ...);
+extern int Mstc_dict_setFValue(Dict *dict, char *key, const char *format, ...);
 
 /* inconditionaly hide or show section */
 extern void Mstc_dict_setShowSection(Dict *dict, char *key, const bool show);
@@ -44,5 +47,11 @@ extern Dict* Mstc_dict_addSectionItem(Dict *dict, char *key);
 /* Free the main dictionnary.*/
 extern void Mstc_dict_free(Dict* dict);
 
+
+/*******************************************************************************
+ * expand
+ ******************************************************************************/
+/* Expand template with dict values */
+extern char* Mstc_expand(const Template*, const Dict*);
 
 #endif /* _MUSTACHE_API_H_ */

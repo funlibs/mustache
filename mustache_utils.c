@@ -138,7 +138,7 @@ Mstc_dict_new()
 }
 
 int
-Mstc_dict_setFormat(
+Mstc_dict_setFValue(
     Dict *dict,
     char *key,
     const char *format, ...)

@@ -68,9 +68,9 @@ check: tests
 	./tests samples/sample.html.tpl
 
 profile: tests
-	cd samples; sudo perf stat -d ../tests 300000 > /dev/null
+	sudo perf stat -d ./tests samples/sample.html.tpl 300000 > /dev/null
 	@echo "Press enter to continue"; read A
-	cd samples; sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ../tests 300000 > /dev/null
-	cd samples; sudo perf report
+	sudo perf record -e task-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses ./tests samples/sample.html.tpl 300000 > /dev/null
+	sudo perf report
 	@#cd samples; valgrind ../tests.bin 10 > /dev/null;
 
