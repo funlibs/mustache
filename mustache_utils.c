@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "mustache_api.h"
+#include "mustache_int.h"
 
 
 /*******************************************************************************

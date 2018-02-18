@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "mustache_api.h"
+#include "mustache_int.h"
 
 #define EXP_OUT_MAX 5000
 typedef struct ExpandOutput {

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "mustache_api.h"
+#include "mustache.h"
 
 Dict*
 simulate_request() {

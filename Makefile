@@ -44,19 +44,15 @@ CFLAGS  = -std=c99 -Wall -ggdb -O2 -I$(PWD)
 LDFLAGS = -L$(PWD) -lmustache
 STRIP   = strip --strip-unneeded
 RM      = rm -f
+OBJECTS = mustache_utils.o mustache_load.o mustache_expand.o tests.o
+
 
 all: libmustache.a
 	$(STRIP) libmustache.a
 
-OBJECTS = mustache_utils.o mustache_load.o mustache_expand.o tests.o
-
 libmustache.a: $(OBJECTS)
 	$(AR) rcs libmustache.a $(OBJECTS)
 
-mustache_expand.o: mustache_expand.c mustache.h
-mustache_load.o: mustache_load.c mustache.h
-mustache_utils.o: mustache_utils.c mustache.h
-tests.o: tests.c mustache.h
 tests: tests.o libmustache.a
 	$(CC) tests.o -o tests $(LDFLAGS)
 
@@ -74,3 +70,8 @@ profile: tests
 	sudo perf report
 	@#cd samples; valgrind ../tests.bin 10 > /dev/null;
 
+# cc -MM *.c
+mustache_expand.o: mustache_expand.c mustache_int.h
+mustache_load.o: mustache_load.c mustache_int.h
+mustache_utils.o: mustache_utils.c mustache_int.h
+tests.o: tests.c mustache.h mustache_int.h

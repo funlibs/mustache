@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "mustache_api.h"
+#include "mustache_int.h"
 
 #define RES_ARENA_BASE_SIZE 16777216 /* around 15 mb */
 #define RES_DICT_INIT_SIZE 50
