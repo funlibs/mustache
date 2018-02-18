@@ -58,7 +58,7 @@ tests: tests.o libmustache.a
 
 .PHONY: clean check profile
 clean:
-	$(RM) $(OBJECTS) libmustache.a tests samples/perf.data*
+	$(RM) $(OBJECTS) libmustache.a tests
 
 check: tests
 	./tests samples/sample.html.tpl

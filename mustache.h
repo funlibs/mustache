@@ -1,7 +1,7 @@
 /* MIT License Copyright 2018  Sebastien Serre */
 
-#ifndef _MUSTACHE_API_H_
-#define _MUSTACHE_API_H_
+#ifndef _MUSTACHE_H_
+#define _MUSTACHE_H_
 #include "mustache_int.h"
 
 /*******************************************************************************
@@ -53,4 +53,4 @@ extern void Mstc_dict_free(Dict* dict);
 /* Expand template with dict values */
 extern char* Mstc_expand(const Template*, const Dict*);
 
-#endif /* _MUSTACHE_API_H_ */
+#endif /* _MUSTACHE_H_ */

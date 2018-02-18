@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _MUSTACHE_H_
-#define _MUSTACHE_H_
+#ifndef _MUSTACHE_INT_H_
+#define _MUSTACHE_INT_H_
 
 #include <stdbool.h>
 
@@ -143,4 +143,4 @@ char* Mstc_template_getTypeFromCode(TokenType);
  */
 extern void Mstc_template_printTokenStructure(Template *t);
 
-#endif /* _MUSTACHE_H_ */
+#endif /* _MUSTACHE_INT_H_ */
